@@ -86,7 +86,8 @@ var map = new maplibregl.Map({
 	container: 'map', // container id
 	//style: 'https://demotiles.maplibre.org/style.json', // style URL
 	//style: 'mapbox://styles/mapbox/light-v10', // get a forbidden error msg
-	style: ' https://api.maptiler.com/maps/streets/style.json?key=kira3KM2jYGvDA4xNkYt', // open source tiles?
+	//style: ' https://api.maptiler.com/maps/streets/style.json?key=kira3KM2jYGvDA4xNkYt', // open source tiles?
+	style: './base-tile.json', // open source tiles?
 	center: [0, 52], // starting position [lng, lat]
 	zoom: 6, // starting zoom
 	hash: true // keep track of location
@@ -107,10 +108,23 @@ map.on('load', function () {
             'source': 'dl-vectors',
 			'source-layer': 'lad',
             'paint': {
-                'fill-color': "#EE7800",
-				'fill-opacity': 0.2,
+                'fill-color': "#0b0c0c",
+				'fill-opacity': 0.1,
             }
         })
+
+
+		map.addLayer({
+            'id': 'ladline',
+            'type': 'line',
+            'source': 'dl-vectors',
+			'source-layer': 'lad',
+            'paint': {
+                'line-color': "#003078",
+				'line-width': 2,
+            }
+        })
+
 		map.addLayer({
             'id': 'conservationarea',
             'type': 'fill',
@@ -161,7 +175,7 @@ map.on('load', function () {
 				console.log(feature.properties.name, feature)
 				new maplibregl.Popup()
 					.setLngLat(coordinates)
-					.setHTML(feature.properties.name)
+					.setHTML(`<p>Name: ${feature.properties.name}</p><p><a href='https://digital-land.github.io/${feature.properties.slug}'>${feature.properties.slug}</a></p>`)
 					.addTo(map);
 			})
 		})
