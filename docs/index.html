@@ -4,53 +4,260 @@
 <meta charset="utf-8" />
 <title>Display a map</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+<script src="./zoom-controls.js"></script>
 <script src="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.js"></script>
 <link href="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.css" rel="stylesheet" />
+<!--<link href="https://digital-land.github.io/stylesheets/dl-frontend.css" rel="stylesheet" />-->
 <style>
 	body { margin: 0; padding: 0; }
-	#map { position: absolute; top: 0; bottom: 0; width: 100%; }
+	#map { position: absolute; top: 50px; bottom: 15px; width: 100%; }
+	#menu {
+background: #fff;
+position: absolute;
+z-index: 1;
+top: 10px;
+right: 10px;
+border-radius: 3px;
+width: 120px;
+border: 1px solid rgba(0, 0, 0, 0.4);
+font-family: 'Open Sans', sans-serif;
+}
+ 
+#menu a {
+font-size: 13px;
+color: #404040;
+display: block;
+margin: 0;
+padding: 0;
+padding: 10px;
+text-decoration: none;
+border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+text-align: center;
+}
+ 
+#menu a:last-child {
+border: none;
+}
+ 
+#menu a:hover {
+background-color: #f8f8f8;
+color: #404040;
+}
+ 
+#menu a.active {
+background-color: #3887be;
+color: #ffffff;
+}
+ 
+#menu a.active:hover {
+background: #3074a4;
+}
+
+.zoom-controls {
+	margin: 15px;
+}
 </style>
 </head>
 <body>
-<div id="map"></div>
+	<div class="dl-map__wrapper">
+
+		<nav id="menu"></nav>
+
+		<div class="zoom-controls" data-module="zoom-controls">
+		  <button class="zoom-controls__btn" data-zoom-control="in">
+			<span class="govuk-visually-hidden">Zoom in</span>
+			<span>+</span>
+		  </button>
+		  <span class="zoom-controls__count-container" aria-live="polite">
+			<span class="govuk-visually-hidden">The map is at zoom level </span>
+			<span class="zoom-controls__count">6</span>
+		  </span>
+		  <button class="zoom-controls__btn" data-zoom-control="out">
+			<span class="govuk-visually-hidden">Zoom out</span>
+			<span>-</span>
+		  </button>
+		</div>
+	
+		<div id="map"></div>
+	</div>
 <script>
+//maplibregl.accessToken = 'pk.eyJ1IjoiY29sbWp1ZGUiLCJhIjoiY2txMHpsc21pMDVoZzJ3bWUwNTE4NHVoeiJ9.2gUe2MR1q4pjYHOhiy0HlA'
 var map = new maplibregl.Map({
 	container: 'map', // container id
-	style: 'https://demotiles.maplibre.org/style.json', // style URL
+	//style: 'https://demotiles.maplibre.org/style.json', // style URL
+	//style: 'mapbox://styles/mapbox/light-v10', // get a forbidden error msg
+	style: ' https://api.maptiler.com/maps/streets/style.json?key=kira3KM2jYGvDA4xNkYt', // open source tiles?
 	center: [0, 52], // starting position [lng, lat]
-	zoom: 6 // starting zoom
+	zoom: 6, // starting zoom
+	hash: true // keep track of location
 });
 
 map.on('load', function () {
 		map.addSource('dl-vectors', {
 			'type': 'vector',
 			'tiles': [
-				'https://vector-tile-spike.herokuapp.com/-/tiles/lad-cons-area/{z}/{x}/{y}.vector.pbf'
+				'https://vector-tile-spike.herokuapp.com/-/tiles/data/{z}/{x}/{y}.vector.pbf'
 			],
 			'minzoom': 6,
-			'maxzoom': 14
+			'maxzoom': 15
 			});
 		map.addLayer({
             'id': 'lad',
-            'type': 'line',
+            'type': 'fill',
             'source': 'dl-vectors',
-						'source-layer': 'lad',
-            <!-- 'paint': { -->
-            <!--     'fill-color': 'rgb(53, 175, 109)', -->
-            <!--     'fill-outline-color': 'rgb(53, 175, 109)' -->
-            <!-- } -->
+			'source-layer': 'lad',
+            'paint': {
+                'fill-color': "#EE7800",
+				'fill-opacity': 0.2,
+            }
         })
 		map.addLayer({
             'id': 'conservationarea',
-            'type': 'line',
+            'type': 'fill',
             'source': 'dl-vectors',
-						'source-layer': 'conservationarea',
-            <!-- 'paint': { -->
-            <!--     'fill-color': 'rgb(53, 175, 109)', -->
-            <!--     'fill-outline-color': 'rgb(53, 175, 109)' -->
-            <!-- } -->
+			'source-layer': 'conservationarea',
+            'paint': {
+				'fill-color': 'rgb(53, 175, 109)',
+				'fill-outline-color': 'rgb(53, 175, 109)'
+            }
         })
-	});
+
+		map.addLayer({
+            'id': 'brownfieldland',
+            'type': 'circle',
+            'source': 'dl-vectors',
+			'source-layer': 'brownfieldland',
+            'paint': {
+				'circle-color': '#0078ff',
+				'circle-opacity': 0.5,
+				'circle-radius': {
+					'base': 1.5,
+					'stops': [
+						[9, 2],
+						[22, 180]
+					]
+				},
+				'circle-stroke-color': '#0078ff',
+				'circle-stroke-width': 2
+            }
+        })
+
+		map.on('click', function (e) {
+			console.log("click at", e)
+			//map.flyTo({
+			//center: e.features[0].geometry.coordinates
+			// set bbox as 5px reactangle area around clicked point
+			var bbox = [
+				[e.point.x - 5, e.point.y - 5],
+				[e.point.x + 5, e.point.y + 5]
+			];
+			var features = map.queryRenderedFeatures(bbox, {
+				layers: ['conservationarea', 'brownfieldland']
+			});
+
+			console.log(features)
+			const coordinates = e.lngLat
+			features.forEach(function(feature) {
+				console.log(feature.properties.name, feature)
+				new maplibregl.Popup()
+					.setLngLat(coordinates)
+					.setHTML(feature.properties.name)
+					.addTo(map);
+			})
+		})
+
+		map.on('click', 'lad', function (e) {
+			console.log("con area click", e)
+			//map.flyTo({
+			//center: e.features[0].geometry.coordinates
+		})
+
+		function countFeatures(layerName) {
+			const l = map.getLayer(layerName)
+			if (l) {
+				return map.queryRenderedFeatures({layers: [layerName]}).length
+			}
+			return 0
+		}
+
+		// LAYERS ON/OFF
+		// After the last frame rendered before the map enters an "idle" state.
+		map.on('idle', function () {
+			// If these two layers have been added to the style,
+			// add the toggle buttons.
+			if (map.getLayer('brownfieldland') && map.getLayer('conservationarea') && map.getLayer('lad')) {
+				// Enumerate ids of the layers.
+				var toggleableLayerIds = ['brownfieldland', 'conservationarea', 'lad'];
+				// Set up the corresponding toggle button for each layer.
+				for (var i = 0; i < toggleableLayerIds.length; i++) {
+					var id = toggleableLayerIds[i];
+					if (!document.getElementById(id)) {
+						// Create a link.
+						var link = document.createElement('a');
+						link.id = id;
+						link.href = '#';
+						link.textContent = id;
+						link.className = 'active';
+						// Show or hide layer when the toggle is clicked.
+						link.onclick = function (e) {
+							var clickedLayer = this.textContent;
+							e.preventDefault();
+							e.stopPropagation();
+ 
+							var visibility = map.getLayoutProperty(
+								clickedLayer,
+								'visibility'
+							);
+	
+							// Toggle layer visibility by changing the layout object's visibility property.
+							if (visibility === 'visible') {
+								map.setLayoutProperty(
+									clickedLayer,
+									'visibility',
+									'none'
+								);
+								this.className = '';
+							} else {
+								this.className = 'active';
+								map.setLayoutProperty(
+									clickedLayer,
+									'visibility',
+									'visible'
+								);
+							}
+						};
+ 
+					var layers = document.getElementById('menu');
+					layers.appendChild(link);
+					}
+				}
+			}
+		});
+
+		map.on('moveend', function (e) {
+			console.log("moveend")
+			console.log("Brownfield", countFeatures('brownfieldland'))
+			console.log("LA boundaries", countFeatures('lad'))
+			console.log("conservation area", countFeatures('conservationarea'))
+		})
+
+		const $zoomMod = document.querySelector('[data-module="zoom-controls"]')
+		const zoomCom = new ZoomControls($zoomMod, map, map.getZoom()).init({})
+
+		// Change the cursor to a pointer when the mouse is over the places layer.
+		map.on('mouseenter', 'brownfieldland', function () {
+			map.getCanvas().style.cursor = 'pointer';
+		});
+		map.on('mouseenter', 'conservationarea', function () {
+			map.getCanvas().style.cursor = 'pointer';
+		});
+		
+		// Change it back to a pointer when it leaves.
+		map.on('mouseleave', 'conservationarea', function () {
+			map.getCanvas().style.cursor = '';
+		});
+
+});
 
 </script>
  
