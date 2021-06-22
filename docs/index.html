@@ -5,12 +5,16 @@
 <title>Display a map</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src="./zoom-controls.js"></script>
+<script src="./leaflet.permalink.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.js"></script>
 <link href="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.css" rel="stylesheet" />
-<!--<link href="https://digital-land.github.io/stylesheets/dl-frontend.css" rel="stylesheet" />-->
+<link href="https://digital-land.github.io/stylesheets/dl-frontend.css" rel="stylesheet" />
 <style>
 	body { margin: 0; padding: 0; }
-	#map { position: absolute; top: 50px; bottom: 15px; width: 100%; }
+	.dl-map__wrapper {
+		margin: 30px;
+	}
+	#map { box-sizing: border-box; padding: 15px; width: 100%; height: 95vh; }
 	#menu {
 background: #fff;
 position: absolute;
@@ -81,6 +85,17 @@ background: #3074a4;
 		<div id="map"></div>
 	</div>
 <script>
+
+//const mappos = L.Permalink.getMapLocation(this.defaultZoomLevel, [53.865, -5.101])
+const mappos = Permalink.getMapLocation(6, [0, 52])
+
+// const theMap = L.map(mapId, {
+// 	center: mappos.center,
+// 	zoom: mappos.zoom
+// })
+
+
+
 //maplibregl.accessToken = 'pk.eyJ1IjoiY29sbWp1ZGUiLCJhIjoiY2txMHpsc21pMDVoZzJ3bWUwNTE4NHVoeiJ9.2gUe2MR1q4pjYHOhiy0HlA'
 var map = new maplibregl.Map({
 	container: 'map', // container id
@@ -88,10 +103,12 @@ var map = new maplibregl.Map({
 	//style: 'mapbox://styles/mapbox/light-v10', // get a forbidden error msg
 	//style: ' https://api.maptiler.com/maps/streets/style.json?key=kira3KM2jYGvDA4xNkYt', // open source tiles?
 	style: './base-tile.json', // open source tiles?
-	center: [0, 52], // starting position [lng, lat]
-	zoom: 6, // starting zoom
-	hash: true // keep track of location
+	center: mappos.center, // starting position [lng, lat]
+	zoom: mappos.zoom // starting zoom
+	//hash: true // keep track of location
 });
+
+Permalink.setup(map)
 
 map.on('load', function () {
 		map.addSource('dl-vectors', {
