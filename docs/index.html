@@ -5,10 +5,10 @@
 <title>Display a map</title>
 <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 <script src="./zoom-controls.js"></script>
-<script src="./leaflet.permalink.min.js"></script>
 <script src="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.js"></script>
 <link href="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.css" rel="stylesheet" />
 <link href="https://digital-land.github.io/stylesheets/dl-frontend.css" rel="stylesheet" />
+<script src="./dl-maps.js"></script>
 <style>
 	body { margin: 0; padding: 0; }
 	.dl-map__wrapper {
@@ -87,7 +87,7 @@ background: #3074a4;
 <script>
 
 //const mappos = L.Permalink.getMapLocation(this.defaultZoomLevel, [53.865, -5.101])
-const mappos = Permalink.getMapLocation(6, [0, 52])
+const mappos = DLMaps.Permalink.getMapLocation(6, [0, 52])
 
 // const theMap = L.map(mapId, {
 // 	center: mappos.center,
@@ -108,7 +108,7 @@ var map = new maplibregl.Map({
 	//hash: true // keep track of location
 });
 
-Permalink.setup(map)
+DLMaps.Permalink.setup(map)
 
 map.on('load', function () {
 		map.addSource('dl-vectors', {
