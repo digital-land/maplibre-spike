@@ -6,6 +6,7 @@
 <script src="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.js"></script>
 <link href="https://unpkg.com/maplibre-gl@1.14.0-rc.1/dist/maplibre-gl.css" rel="stylesheet" />
 <script src="./zoom-controls.js"></script>
+<script src="./maplibre-layer-controls.js"></script>
 <script src="./dl-maps.js"></script>
 {% endblock -%}
 
@@ -37,22 +38,19 @@
 
   {% macro layerControlItem(layer) %}
   <li class="govuk-!-margin-bottom-2" data-layer-control="{{ layer.dataset }}" 
-  {% if layer.active_zoom_level %}data-layer-control-zoom={{layer.active_zoom_level}}{% endif %} 
-  {% if layer.colour %}data-layer-colour="{{ layer.colour }}"{% endif %}>
+  {% if layer.type %}data-layer-data-type={{layer.type}}{% endif %} 
+  {% if layer.paint_options %}data-style-options="{{ layer.paint_options.colour }},{{ layer.paint_options.opacity }}"{% endif %}>
     <div class="govuk-checkboxes__item">
       <input class="govuk-checkboxes__input" id="{{ layer.dataset }}" name="{{ layer.dataset }}" type="checkbox" value="{{ layer.dataset }}" {{ "checked='checked'" if layer.checked }}>
       <label class="govuk-label govuk-checkboxes__label" for="{{ layer.dataset }}">
         {{ layer.label }}
-        {% if layer.active_zoom_level %}
-          <div class="dl-small-text secondary-text">From zoom level {{ layer.active_zoom_level }}</div>
-        {% endif %}
       </label>
     </div>
   </li>
   {% endmacro %}
 
   <div id="mapid" style="height: 700px;" aria-labelledby="aria-label-national-map"></div>
-  <div class="dl-map__side-panel dl-map__side-panel--full">
+  <div class="dl-map__side-panel dl-map__side-panel--full js-hidden">
     <div class="dl-map__side-panel__heading">
       <h3 class="govuk-heading-s govuk-!-margin-bottom-0">Data layers</h3>
     </div>
@@ -101,57 +99,66 @@
   
   DLMaps.Permalink.setup(map)
   
+
   map.on('load', function () {
-      map.addSource('dl-vectors', {
-        'type': 'vector',
-        'tiles': [
-          'https://vector-tile-spike.herokuapp.com/-/tiles/data/{z}/{x}/{y}.vector.pbf'
-        ],
-        'minzoom': 6,
-        'maxzoom': 15
-        });
-      map.addLayer({
-              'id': 'lad',
-              'type': 'fill',
-              'source': 'dl-vectors',
-        'source-layer': 'lad',
-              'paint': {
-                  'fill-color': "#0b0c0c",
-          'fill-opacity': 0.1,
-              }
-          })
+    // register the source of the tiles
+    const sourceName = 'dl-vectors'
+    map.addSource(sourceName, {
+      'type': 'vector',
+      'tiles': [
+        'https://vector-tile-spike.herokuapp.com/-/tiles/data/{z}/{x}/{y}.vector.pbf'
+      ],
+      'minzoom': 6,
+      'maxzoom': 15
+    });
+
+    const mapID = "mapid"
+    const $controlsList = document.querySelector('[data-module="layer-controls"]')
+
+    layerControlsComponent = new LayerControls($controlsList, map, sourceName).init()
+
+      // map.addLayer({
+      //         'id': 'lad',
+      //         'type': 'fill',
+      //         'source': 'dl-vectors',
+      //   'source-layer': 'lad',
+      //         'paint': {
+      //             'fill-color': "#0b0c0c",
+      //     'fill-opacity': 0.1,
+      //         }
+      //     })
   
   
-      map.addLayer({
-              'id': 'ladline',
-              'type': 'line',
-              'source': 'dl-vectors',
-        'source-layer': 'lad',
-              'paint': {
-                  'line-color': "#003078",
-          'line-width': 2,
-              }
-          })
+      // map.addLayer({
+      //         'id': 'ladline',
+      //         'type': 'line',
+      //         'source': 'dl-vectors',
+      //   'source-layer': 'lad',
+      //         'paint': {
+      //             'line-color': "#003078",
+      //     'line-width': 2,
+      //         }
+      //     })
   
-      map.addLayer({
-              'id': 'brownfieldland',
-              'type': 'circle',
-              'source': 'dl-vectors',
-        'source-layer': 'brownfieldland',
-              'paint': {
-          'circle-color': '#0078ff',
-          'circle-opacity': 0.5,
-          'circle-radius': {
-            'base': 1.5,
-            'stops': [
-              [9, 2],
-              [22, 180]
-            ]
-          },
-          'circle-stroke-color': '#0078ff',
-          'circle-stroke-width': 2
-              }
-          })
+      // map.addLayer({
+      //         'id': 'brownfieldland',
+      //         'type': 'circle',
+      //         'source': 'dl-vectors',
+      //   'source-layer': 'brownfieldland',
+      //         'paint': {
+      //     'circle-color': '#0078ff',
+      //     'circle-opacity': 0.5,
+      //     'circle-radius': {
+      //       'base': 1.5,
+      //       'stops': [
+      //         [9, 2],
+      //         [22, 180]
+      //       ]
+      //     },
+      //     'circle-stroke-color': '#0078ff',
+      //     'circle-stroke-width': 2
+      //         }
+      //     })
   
       // Load an image to use as the pattern from an external URL.
       map.loadImage(
@@ -174,17 +181,17 @@
           // 	}
           // });
   
-          map.addLayer({
-                  'id': 'conservationarea',
-                  'type': 'fill',
-                  'source': 'dl-vectors',
-            'source-layer': 'conservationarea',
-                  'paint': {
-              'fill-color': 'rgb(53, 175, 109)',
-              'fill-outline-color': 'rgb(53, 175, 109)',
-              'fill-pattern': 'pattern'
-                  }
-               })
+          // map.addLayer({
+          //         'id': 'conservationarea',
+          //         'type': 'fill',
+          //         'source': 'dl-vectors',
+          //   'source-layer': 'conservationarea',
+          //         'paint': {
+          //     'fill-color': 'rgb(53, 175, 109)',
+          //     'fill-outline-color': 'rgb(53, 175, 109)',
+          //     'fill-pattern': 'pattern'
+          //         }
+          //      })
         }
       );
   
