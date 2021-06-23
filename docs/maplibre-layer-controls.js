@@ -28,6 +28,7 @@ LayerControls.prototype.init = function (params) {
 
   // create mapping between dataset and layer, one per control item
   this.availableLayers = this.createAllFeatureLayers()
+  console.log(this.availableLayers)
 
   // listen for changes to URL
   var boundSetControls = this.setControls.bind(this)
@@ -79,9 +80,9 @@ LayerControls.prototype.getControlByName = function (dataset) {
   return undefined
 }
 
-LayerControls.prototype.createVectorLayer = function (datasetName, _type, paintOptions) {
+LayerControls.prototype.createVectorLayer = function (layerId, datasetName, _type, paintOptions) {
   this.map.addLayer({
-    id: datasetName,
+    id: layerId,
     type: _type,
     source: this.tileSource,
     'source-layer': datasetName,
@@ -97,10 +98,10 @@ LayerControls.prototype.createAllFeatureLayers = function () {
     const datasetName = that.getDatasetName($control)
     const dataType = that.getDatasetType($control)
     const styleProps = that.getStyle($control)
-    let paintOptions = {}
-    let layerType
+    let layers
 
     if (dataType === 'point') {
+      const paintOptions = {}
       paintOptions['circle-color'] = styleProps.colour
       paintOptions['circle-opacity'] = styleProps.opacity
       paintOptions['circle-radius'] = {
@@ -112,15 +113,23 @@ LayerControls.prototype.createAllFeatureLayers = function () {
       }
       paintOptions['circle-stroke-color'] = styleProps.colour
       paintOptions['circle-stroke-width'] = styleProps.weight
-      layerType = 'circle'
+      // create the layer
+      that.createVectorLayer(datasetName, datasetName, 'circle', paintOptions)
+      layers = [datasetName]
     } else {
-      paintOptions['fill-color'] = styleProps.colour
-      paintOptions['fill-opacity'] = styleProps.opacity
-      layerType = 'fill'
+      // create fill layer
+      that.createVectorLayer(datasetName + 'Fill', datasetName, 'fill', {
+        'fill-color': styleProps.colour,
+        'fill-opacity': styleProps.opacity
+      })
+      // create line layer
+      that.createVectorLayer(datasetName + 'Line', datasetName, 'line', {
+        'line-color': styleProps.colour,
+        'line-width': styleProps.weight
+      })
+      layers = [datasetName + 'Fill', datasetName + 'Line']
     }
-    // create the layer
-    that.createVectorLayer(datasetName, layerType, paintOptions)
-    availableDatasets.push(datasetName)
+    availableDatasets[datasetName] = layers
   })
   return availableDatasets
 }
@@ -146,24 +155,25 @@ LayerControls.prototype.disable = function ($control) {
 LayerControls.prototype.setControls = function () {
   const urlParams = (new URL(document.location)).searchParams
 
+  let enabledLayerNames = []
   if (urlParams.has('layer')) {
     // get the names of the enabled and disabled layers
     // only care about layers that exist
-    const enabledLayerNames = urlParams.getAll('layer').filter(name => this.datasetNames.indexOf(name) > -1)
+    enabledLayerNames = urlParams.getAll('layer').filter(name => this.datasetNames.indexOf(name) > -1)
     console.log('Enable:', enabledLayerNames)
-
-    const datasetNamesClone = [].concat(this.datasetNames)
-    const disabledLayerNames = datasetNamesClone.filter(name => enabledLayerNames.indexOf(name) === -1)
-
-    // map the names to the controls
-    const toEnable = enabledLayerNames.map(name => this.getControlByName(name))
-    const toDisable = disabledLayerNames.map(name => this.getControlByName(name))
-    console.log(toEnable, toDisable)
-
-    // pass correct this arg
-    toEnable.forEach(this.enable, this)
-    toDisable.forEach(this.disable, this)
   }
+
+  const datasetNamesClone = [].concat(this.datasetNames)
+  const disabledLayerNames = datasetNamesClone.filter(name => enabledLayerNames.indexOf(name) === -1)
+
+  // map the names to the controls
+  const toEnable = enabledLayerNames.map(name => this.getControlByName(name))
+  const toDisable = disabledLayerNames.map(name => this.getControlByName(name))
+  console.log(toEnable, toDisable)
+
+  // pass correct this arg
+  toEnable.forEach(this.enable, this)
+  toDisable.forEach(this.disable, this)
 }
 
 LayerControls.prototype.updateURL = function () {
@@ -205,7 +215,7 @@ LayerControls.prototype.getZoomRestriction = function ($control) {
 
 LayerControls.prototype.getStyle = function ($control) {
   const defaultColour = '#003078'
-  const defaultOpacity = 1
+  const defaultOpacity = 0.5
   const defaultWeight = 2
   const s = $control.dataset.styleOptions
   const parts = s.split(',')
@@ -220,14 +230,20 @@ LayerControls.prototype.getMarkerRadius = function ($control) {
   return parseInt($control.dataset.layerMarkerRadius)
 }
 
-LayerControls.prototype.toggleLayerVisibility = function (map, datasetName, toEnable) {
-  console.log("toggle layer", datasetName)
-  const visibility = (toEnable) ? 'visible' : 'none'
-  map.setLayoutProperty(
-    datasetName,
+LayerControls.prototype._toggleLayer = function (layerId, visibility) {
+  this.map.setLayoutProperty(
+    layerId,
     'visibility',
     visibility
   )
+}
+
+LayerControls.prototype.toggleLayerVisibility = function (map, datasetName, toEnable) {
+  console.log("toggle layer", datasetName)
+  const visibility = (toEnable) ? 'visible' : 'none'
+  const layers = this.availableLayers[datasetName]
+  console.log("to toggle", toEnable, layers)
+  layers.forEach(layerId => this._toggleLayer(layerId, visibility))
 }
 
 LayerControls.prototype.setupOptions = function (params) {
