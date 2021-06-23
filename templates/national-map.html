@@ -290,8 +290,8 @@
       map.on('moveend', function (e) {
         console.log("moveend")
         console.log("Brownfield", countFeatures('brownfieldland'))
-        console.log("LA boundaries", countFeatures('lad'))
-        console.log("conservation area", countFeatures('conservationarea'))
+        console.log("LA boundaries", countFeatures('ladFill'))
+        console.log("conservation area", countFeatures('conservationareaFill'))
       })
   
       const $zoomMod = document.querySelector('[data-module="zoom-controls"]')
