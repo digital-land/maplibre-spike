@@ -51,7 +51,7 @@ ZoomControls.prototype.zoom = function (direction) {
 
 ZoomControls.prototype.zoomHandler = function (e) {
 const zoomLevel = this.map.getZoom()
-this.$counter.textContent = zoomLevel
+this.$counter.textContent = parseFloat(zoomLevel).toFixed(2)
 }
 
 ZoomControls.prototype.setupOptions = function (params) {
