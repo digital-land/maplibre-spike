@@ -72,9 +72,21 @@ MapController.prototype.clickHandler = function (e) {
     [e.point.x + 5, e.point.y + 5]
   ]
 
+  const that = this
+  // returns a list of layer ids we want to be 'clickable'
+  const enabledControls = this.layerControlsComponent.enabledLayers()
+  const enabledLayers = enabledControls.map($control => that.layerControlsComponent.getDatasetName($control))
+  const clickableLayers = enabledLayers.map(function (layer) {
+    const components = that.layerControlsComponent.availableLayers[layer]
+    if (components.includes(layer + 'Fill')) {
+      return layer + 'Fill'
+    }
+    return components[0]
+  })
+  console.log('Clickable layers: ', clickableLayers)
   // need to get all the layers that are clickable
   var features = map.queryRenderedFeatures(bbox, {
-    layers: ['conservationarea', 'brownfieldland']
+    layers: clickableLayers
   })
 
   console.log(features)
