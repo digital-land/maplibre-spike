@@ -111,10 +111,11 @@ MapController.prototype.setupOptions = function (params) {
 }
 
 MapController.prototype.debug = function () {
+  const that = this
   function countFeatures (layerName) {
-    const l = this.map.getLayer(layerName)
+    const l = that.map.getLayer(layerName)
     if (l) {
-      return this.map.queryRenderedFeatures({ layers: [layerName] }).length
+      return that.map.queryRenderedFeatures({ layers: [layerName] }).length
     }
     return 0
   }
