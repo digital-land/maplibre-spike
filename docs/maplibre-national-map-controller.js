@@ -56,7 +56,7 @@ MapController.prototype.addSource = function () {
   this.map.addSource(sourceName, {
     type: 'vector',
     tiles: [
-      'http://datasettetileserver-env.eba-gx3h2mer.eu-west-2.elasticbeanstalk.com/-/tiles/dataset_tiles/{z}/{x}/{y}.vector.pbf'
+      'https://datasette-tiles.digital-land.info/-/tiles/dataset_tiles/{z}/{x}/{y}.vector.pbf'
     ],
     minzoom: 6,
     maxzoom: 15
