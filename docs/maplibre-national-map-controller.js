@@ -1,5 +1,10 @@
 /* global DLMaps, maplibregl, LayerControls, ZoomControls */
 
+// to move to utils
+function capitalizeFirstLetter (string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
 function MapController ($layerControlsList, $zoomControls) {
   this.$layerControlsList = $layerControlsList
   this.$zoomControls = $zoomControls
@@ -63,6 +68,17 @@ MapController.prototype.addSource = function () {
   })
 }
 
+MapController.prototype.createPopupHTML = function (feature) {
+  const featureType = capitalizeFirstLetter(feature.sourceLayer).replace('-', ' ')
+  const html = [
+    `<p class="secondary-text govuk-!-margin-bottom-0">${featureType}</p>`,
+    '<p class="dl-small-text govuk-!-margin-top-0">',
+    `<a href="https://digital-land.github.io/${feature.properties.slug}">${feature.properties.name}</a>`,
+    '</p>'
+  ]
+  return html.join('\n')
+}
+
 MapController.prototype.clickHandler = function (e) {
   const map = this.map
   console.log('click at', e)
@@ -93,9 +109,10 @@ MapController.prototype.clickHandler = function (e) {
   const coordinates = e.lngLat
   features.forEach(function (feature) {
     console.log(feature.properties.name, feature)
+    const popupHTML = that.createPopupHTML(feature)
     new maplibregl.Popup()
       .setLngLat(coordinates)
-      .setHTML(`<p>Name: ${feature.properties.name}</p><p><a href='https://digital-land.github.io/${feature.properties.slug}'>${feature.properties.slug}</a></p>`)
+      .setHTML(popupHTML)
       .addTo(map)
   })
 }
