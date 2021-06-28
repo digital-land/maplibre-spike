@@ -216,7 +216,7 @@
         
   <li class="govuk-!-margin-bottom-2" data-layer-control="brownfield-land" 
   data-layer-data-type=point 
-  data-style-options="#0078ff,">
+  data-style-options="#745729,">
     <div class="govuk-checkboxes__item">
       <input class="govuk-checkboxes__input" id="brownfield-land" name="brownfield-land" type="checkbox" value="brownfield-land" >
       <label class="govuk-label govuk-checkboxes__label" for="brownfield-land">
@@ -283,7 +283,7 @@
    
   data-style-options="#0b0c0c,0.1">
     <div class="govuk-checkboxes__item">
-      <input class="govuk-checkboxes__input" id="local-authority-district" name="local-authority-district" type="checkbox" value="local-authority-district" checked=&#39;checked&#39;>
+      <input class="govuk-checkboxes__input" id="local-authority-district" name="local-authority-district" type="checkbox" value="local-authority-district" >
       <label class="govuk-label govuk-checkboxes__label" for="local-authority-district">
         Local authority districts
       </label>
@@ -453,249 +453,11 @@
 	</script>
 	
 <script>
-
+  // grab html elements
   const $controlsList = document.querySelector('[data-module="layer-controls"]')
   const $zoomMod = document.querySelector('[data-module="zoom-controls"]')
-
+  // init national map
   const mapController = new MapController($controlsList, $zoomMod).init({})
-
-  //const mappos = L.Permalink.getMapLocation(this.defaultZoomLevel, [53.865, -5.101])
-  // const mappos = DLMaps.Permalink.getMapLocation(6, [0, 52])
-  
-  // // const theMap = L.map(mapId, {
-  // // 	center: mappos.center,
-  // // 	zoom: mappos.zoom
-  // // })
-  
-  
-  
-  // //maplibregl.accessToken = 'pk.eyJ1IjoiY29sbWp1ZGUiLCJhIjoiY2txMHpsc21pMDVoZzJ3bWUwNTE4NHVoeiJ9.2gUe2MR1q4pjYHOhiy0HlA'
-  // var map = new maplibregl.Map({
-  //   container: 'mapid', // container id
-  //   //style: 'https://demotiles.maplibre.org/style.json', // style URL
-  //   //style: 'mapbox://styles/mapbox/light-v10', // get a forbidden error msg
-  //   //style: ' https://api.maptiler.com/maps/streets/style.json?key=kira3KM2jYGvDA4xNkYt', // open source tiles?
-  //   style: './base-tile.json', // open source tiles?
-  //   center: mappos.center, // starting position [lng, lat]
-  //   zoom: mappos.zoom // starting zoom
-  //   //hash: true // keep track of location
-  // });
-  
-  // DLMaps.Permalink.setup(map)
-  
-
-  // map.on('load', function () {
-  //   // register the source of the tiles
-  //   const sourceName = 'dl-vectors'
-  //   map.addSource(sourceName, {
-  //     'type': 'vector',
-  //     'tiles': [
-  //       'https://vector-tile-spike.herokuapp.com/-/tiles/data/{z}/{x}/{y}.vector.pbf'
-  //     ],
-  //     'minzoom': 6,
-  //     'maxzoom': 15
-  //   });
-
-  //   const mapID = "mapid"
-  //   const $controlsList = document.querySelector('[data-module="layer-controls"]')
-
-  //   layerControlsComponent = new LayerControls($controlsList, map, sourceName).init()
-
-  //     // map.addLayer({
-  //     //         'id': 'lad',
-  //     //         'type': 'fill',
-  //     //         'source': 'dl-vectors',
-  //     //   'source-layer': 'lad',
-  //     //         'paint': {
-  //     //             'fill-color': "#0b0c0c",
-  //     //     'fill-opacity': 0.1,
-  //     //         }
-  //     //     })
-  
-  
-  //     // map.addLayer({
-  //     //         'id': 'ladline',
-  //     //         'type': 'line',
-  //     //         'source': 'dl-vectors',
-  //     //   'source-layer': 'lad',
-  //     //         'paint': {
-  //     //             'line-color': "#003078",
-  //     //     'line-width': 2,
-  //     //         }
-  //     //     })
-  
-  //     // map.addLayer({
-  //     //         'id': 'brownfieldland',
-  //     //         'type': 'circle',
-  //     //         'source': 'dl-vectors',
-  //     //   'source-layer': 'brownfieldland',
-  //     //         'paint': {
-  //     //     'circle-color': '#0078ff',
-  //     //     'circle-opacity': 0.5,
-  //     //     'circle-radius': {
-  //     //       'base': 1.5,
-  //     //       'stops': [
-  //     //         [9, 2],
-  //     //         [22, 180]
-  //     //       ]
-  //     //     },
-  //     //     'circle-stroke-color': '#0078ff',
-  //     //     'circle-stroke-width': 2
-  //     //         }
-  //     //     })
-  
-  //     // Load an image to use as the pattern from an external URL.
-  //     map.loadImage(
-  //       './stripe.png',
-  //       function (err, image) {
-  //         // Throw an error if something goes wrong.
-  //         if (err) throw err;
-    
-  //         // Add the image to the map style.
-  //         map.addImage('pattern', image);
-  //         console.log("image added ok")
-    
-  //         // Create a new layer and style it using `fill-pattern`.
-  //         // map.addLayer({
-  //         // 	'id': 'pattern-layer',
-  //         // 	'type': 'fill',
-  //         // 	'source': 'source',
-  //         // 	'paint': {
-  //         // 		'fill-pattern': 'pattern'
-  //         // 	}
-  //         // });
-  
-  //         // map.addLayer({
-  //         //         'id': 'conservationarea',
-  //         //         'type': 'fill',
-  //         //         'source': 'dl-vectors',
-  //         //   'source-layer': 'conservationarea',
-  //         //         'paint': {
-  //         //     'fill-color': 'rgb(53, 175, 109)',
-  //         //     'fill-outline-color': 'rgb(53, 175, 109)',
-  //         //     'fill-pattern': 'pattern'
-  //         //         }
-  //         //      })
-  //       }
-  //     );
-  
-  //     map.on('click', function (e) {
-  //       console.log("click at", e)
-  //       //map.flyTo({
-  //       //center: e.features[0].geometry.coordinates
-  //       // set bbox as 5px reactangle area around clicked point
-  //       var bbox = [
-  //         [e.point.x - 5, e.point.y - 5],
-  //         [e.point.x + 5, e.point.y + 5]
-  //       ];
-  //       var features = map.queryRenderedFeatures(bbox, {
-  //         layers: ['conservationarea', 'brownfieldland']
-  //       });
-  
-  //       console.log(features)
-  //       const coordinates = e.lngLat
-  //       features.forEach(function(feature) {
-  //         console.log(feature.properties.name, feature)
-  //         new maplibregl.Popup()
-  //           .setLngLat(coordinates)
-  //           .setHTML(`<p>Name: ${feature.properties.name}</p><p><a href='https://digital-land.github.io/${feature.properties.slug}'>${feature.properties.slug}</a></p>`)
-  //           .addTo(map);
-  //       })
-  //     })
-  
-  //     map.on('click', 'lad', function (e) {
-  //       console.log("con area click", e)
-  //       //map.flyTo({
-  //       //center: e.features[0].geometry.coordinates
-  //     })
-  
-  //     function countFeatures(layerName) {
-  //       const l = map.getLayer(layerName)
-  //       if (l) {
-  //         return map.queryRenderedFeatures({layers: [layerName]}).length
-  //       }
-  //       return 0
-  //     }
-  
-  //     // LAYERS ON/OFF
-  //     // After the last frame rendered before the map enters an "idle" state.
-  //     map.on('idle', function () {
-  //       // If these two layers have been added to the style,
-  //       // add the toggle buttons.
-  //       if (map.getLayer('brownfieldland') && map.getLayer('conservationarea') && map.getLayer('lad')) {
-  //         // Enumerate ids of the layers.
-  //         var toggleableLayerIds = ['brownfieldland', 'conservationarea', 'lad'];
-  //         // Set up the corresponding toggle button for each layer.
-  //         for (var i = 0; i < toggleableLayerIds.length; i++) {
-  //           var id = toggleableLayerIds[i];
-  //           if (!document.getElementById(id)) {
-  //             // Create a link.
-  //             var link = document.createElement('a');
-  //             link.id = id;
-  //             link.href = '#';
-  //             link.textContent = id;
-  //             link.className = 'active';
-  //             // Show or hide layer when the toggle is clicked.
-  //             link.onclick = function (e) {
-  //               var clickedLayer = this.textContent;
-  //               e.preventDefault();
-  //               e.stopPropagation();
-   
-  //               var visibility = map.getLayoutProperty(
-  //                 clickedLayer,
-  //                 'visibility'
-  //               );
-    
-  //               // Toggle layer visibility by changing the layout object's visibility property.
-  //               if (visibility === 'visible') {
-  //                 map.setLayoutProperty(
-  //                   clickedLayer,
-  //                   'visibility',
-  //                   'none'
-  //                 );
-  //                 this.className = '';
-  //               } else {
-  //                 this.className = 'active';
-  //                 map.setLayoutProperty(
-  //                   clickedLayer,
-  //                   'visibility',
-  //                   'visible'
-  //                 );
-  //               }
-  //             };
-   
-  //           var layers = document.getElementById('menu');
-  //           layers.appendChild(link);
-  //           }
-  //         }
-  //       }
-  //     });
-  
-  //     map.on('moveend', function (e) {
-  //       console.log("moveend")
-  //       console.log("Brownfield", countFeatures('brownfieldland'))
-  //       console.log("LA boundaries", countFeatures('ladFill'))
-  //       console.log("conservation area", countFeatures('conservationareaFill'))
-  //     })
-  
-  //     const $zoomMod = document.querySelector('[data-module="zoom-controls"]')
-  //     const zoomCom = new ZoomControls($zoomMod, map, map.getZoom()).init({})
-  
-  //     // Change the cursor to a pointer when the mouse is over the places layer.
-  //     map.on('mouseenter', 'brownfieldland', function () {
-  //       map.getCanvas().style.cursor = 'pointer';
-  //     });
-  //     map.on('mouseenter', 'conservationarea', function () {
-  //       map.getCanvas().style.cursor = 'pointer';
-  //     });
-      
-  //     // Change it back to a pointer when it leaves.
-  //     map.on('mouseleave', 'conservationarea', function () {
-  //       map.getCanvas().style.cursor = '';
-  //     });
-  
-  // });
-  
   </script>
 
 

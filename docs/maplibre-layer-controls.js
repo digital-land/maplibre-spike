@@ -108,7 +108,7 @@ LayerControls.prototype.createAllFeatureLayers = function () {
         'circle-radius': {
           base: 1.5,
           stops: [
-            [6, 2],
+            [6, 1],
             [22, 180]
           ]
         },

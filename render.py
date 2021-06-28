@@ -21,27 +21,9 @@ env.globals["includeAutocomplete"] = True
 def render_national_map():
     map_template = env.get_template("national-map.html")
     all_layers = [
-        # {
-        #     "dataset": "local-authority-district",
-        #     "label": "Local authority districts",
-        #     "checked": True,
-        #     "colour": "#EE7800",
-        # },
-        # {
-        #     "dataset": "conservation-area",
-        #     "label": "Conservation areas",
-        #     "colour": "#78AA00",
-        # },
-        # {
-        #     "dataset": "brownfield-land",
-        #     "label": "Brownfield land",
-        #     "colour": "#0078ff",
-        #     "type": "point",
-        # },
         {
             "dataset": "local-authority-district",
             "label": "Local authority districts",
-            "checked": True,
             "paint_options": {
               "colour": "#0b0c0c",
               "opacity": "0.1",
@@ -59,7 +41,7 @@ def render_national_map():
             "dataset": "brownfield-land",
             "label": "Brownfield land",
             "paint_options": {
-              "colour": "#0078ff",
+              "colour": "#745729",
             },
             "type": "point",
         },
