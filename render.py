@@ -118,6 +118,55 @@ def render_national_map():
             },
             "type": "point",
         },
+        {
+            "dataset": "special-area-of-conservation",
+            "label": "Special areas of conservation",
+            "paint_options": {
+              "colour": "#7A8705",
+            }
+        },
+        {
+            "dataset": "scheduled-monument",
+            "label": "Scheduled monuments",
+            "paint_options": {
+              "colour": "#0F9CDA",
+            }
+        },
+        {
+            "dataset": "heritage-at-risk",
+            "label": "Heritage at risk",
+            "paint_options": {
+              "colour": "#8D73AF",
+            }
+        },
+        {
+            "dataset": "certificate-of-immunity",
+            "label": "Certificate of immunity",
+            "paint_options": {
+              "colour": "#D8760D",
+            }
+        },
+        {
+            "dataset": "building-preservation-notice",
+            "label": "Building preservation notices",
+            "paint_options": {
+              "colour": "#f944c7",
+            }
+        },
+        {
+          "dataset": "ramsar",
+          "label": "Ramsar", 
+          "paint_options": {
+            "colour": "#7fcdff"
+          }
+        },
+        {
+            "dataset": "site-of-special-scientific-interest",
+            "label": "Sites of special scientific interest",
+            "paint_options": {
+              "colour": "#308fac",
+            }
+        },
     ]
     render(
         "index.html",
