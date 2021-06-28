@@ -22,7 +22,7 @@ MapController.prototype.init = function (params) {
   const boundSetup = this.setup.bind(this)
   this.map.on('load', boundSetup)
 
-  // add debugging code
+  // run debugging code
   this.debug()
 
   return this
@@ -61,10 +61,10 @@ MapController.prototype.addSource = function () {
   this.map.addSource(sourceName, {
     type: 'vector',
     tiles: [
-      'https://datasette-tiles.digital-land.info/-/tiles/dataset_tiles/{z}/{x}/{y}.vector.pbf'
+      this.vectorSource
     ],
-    minzoom: 6,
-    maxzoom: 15
+    minzoom: this.minMapZoom,
+    maxzoom: this.maxMapZoom
   })
 }
 
@@ -73,7 +73,7 @@ MapController.prototype.createPopupHTML = function (feature) {
   const html = [
     `<p class="secondary-text govuk-!-margin-bottom-0">${featureType}</p>`,
     '<p class="dl-small-text govuk-!-margin-top-0">',
-    `<a href="https://digital-land.github.io/${feature.properties.slug}">${feature.properties.name}</a>`,
+    `<a href="${this.baseURL}${feature.properties.slug}">${feature.properties.name}</a>`,
     '</p>'
   ]
   return html.join('\n')
@@ -125,6 +125,10 @@ MapController.prototype.setupOptions = function (params) {
   params = params || {}
   this.mapId = params.mapId || 'mapid'
   this.sourceName = params.sourceName || 'dl-vectors'
+  this.vectorSource = params.vectorSource || 'https://datasette-tiles.digital-land.info/-/tiles/dataset_tiles/{z}/{x}/{y}.vector.pbf'
+  this.minMapZoom = params.minMapZoom || 6
+  this.maxMapZoom = params.maxMapZoom || 15
+  this.baseURL = params.baseURL || 'https://digital-land.github.io'
 }
 
 MapController.prototype.debug = function () {
