@@ -101,18 +101,20 @@ LayerControls.prototype.createAllFeatureLayers = function () {
     let layers
 
     if (dataType === 'point') {
-      const paintOptions = {}
-      paintOptions['circle-color'] = styleProps.colour
-      paintOptions['circle-opacity'] = styleProps.opacity
-      paintOptions['circle-radius'] = {
-        base: 1.5,
-        stops: [
-          [7, 2],
-          [22, 180]
-        ]
+      // set options for points as circle markers
+      const paintOptions = {
+        'circle-color': styleProps.colour,
+        'circle-opacity': styleProps.opacity,
+        'circle-radius': {
+          base: 1.5,
+          stops: [
+            [6, 2],
+            [22, 180]
+          ]
+        },
+        'circle-stroke-color': styleProps.colour,
+        'circle-stroke-width': styleProps.weight
       }
-      paintOptions['circle-stroke-color'] = styleProps.colour
-      paintOptions['circle-stroke-width'] = styleProps.weight
       // create the layer
       that.createVectorLayer(datasetName, datasetName, 'circle', paintOptions)
       layers = [datasetName]
@@ -239,10 +241,9 @@ LayerControls.prototype._toggleLayer = function (layerId, visibility) {
 }
 
 LayerControls.prototype.toggleLayerVisibility = function (map, datasetName, toEnable) {
-  console.log("toggle layer", datasetName)
+  console.log('toggle layer', datasetName)
   const visibility = (toEnable) ? 'visible' : 'none'
   const layers = this.availableLayers[datasetName]
-  console.log("to toggle", toEnable, layers)
   layers.forEach(layerId => this._toggleLayer(layerId, visibility))
 }
 
