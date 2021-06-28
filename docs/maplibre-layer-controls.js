@@ -154,6 +154,9 @@ LayerControls.prototype.disable = function ($control) {
   this.toggleLayerVisibility(this.map, this.getDatasetName($control), false)
 }
 
+/**
+ * Sets the checkboxes based on ?layer= URL params
+ */
 LayerControls.prototype.setControls = function () {
   const urlParams = (new URL(document.location)).searchParams
 
@@ -178,6 +181,9 @@ LayerControls.prototype.setControls = function () {
   toDisable.forEach(this.disable, this)
 }
 
+/**
+ * Updates the URL by adding or removing ?layer= params based on latest changes to checkboxes
+ */
 LayerControls.prototype.updateURL = function () {
   const urlParams = (new URL(document.location)).searchParams
   const enabledLayers = this.enabledLayers().map($control => this.getDatasetName($control))
@@ -215,6 +221,10 @@ LayerControls.prototype.getZoomRestriction = function ($control) {
   return $control.dataset.layerControlZoom
 }
 
+/**
+ * Extracts and splits style options from style data attribute string
+ * @param  {Element} $control a control item
+ */
 LayerControls.prototype.getStyle = function ($control) {
   const defaultColour = '#003078'
   const defaultOpacity = 0.5
@@ -226,10 +236,6 @@ LayerControls.prototype.getStyle = function ($control) {
     opacity: parseFloat(parts[1]) || defaultOpacity,
     weight: parseInt(parts[2]) || defaultWeight
   }
-}
-
-LayerControls.prototype.getMarkerRadius = function ($control) {
-  return parseInt($control.dataset.layerMarkerRadius)
 }
 
 LayerControls.prototype._toggleLayer = function (layerId, visibility) {
